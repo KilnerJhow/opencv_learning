@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 
 #%%
-#Carregando uma imagem
-PATH = "imagem2.png"
+#Loading image
+PATH = "morph.jpeg"
 
 flagReader= {  'Colorida': [1, cv2.IMREAD_COLOR],
                 'Com transparencia': [-1, cv2.IMREAD_UNCHANGED],
@@ -19,7 +19,7 @@ imgGrayScale = cv2.imread(PATH, flagReader['Escala de cinza'][1])
 
 print(imgColor.shape, imgTransparency.shape, imgGrayScale.shape)
 # %%
-# Visualizar uma imagem
+# See an image in window
 
 windowName = "Hello, OpenCV"
 cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
