@@ -14,6 +14,8 @@ def show_image(img):
     cv2.imshow(WINDOW_NAME, img)
     cv2.waitKey()
 
+def nothing(x):
+    pass
 
 imgRead_1 = cv2.imread(PATH_IMG_1, cv2.IMREAD_GRAYSCALE)
 
@@ -22,7 +24,6 @@ imgRead_2 = cv2.imread(PATH_IMG_2, cv2.IMREAD_GRAYSCALE)
 print(imgRead_1.shape, imgRead_2.shape)
 
 figPlot = plt.figure()
-
 
 
 #%%
@@ -84,24 +85,34 @@ plt.show()
 
 #%%
 # Limiarizando imagem 1
+THETA = 38 #obtido a partir de brute force
 
-
-theta = 30
-
-valor, img1Binary = cv2.threshold(imgRead_1, theta, 255, cv2.THRESH_BINARY)
-
-# show_image(img1Binary)
+valor, img1Binary = cv2.threshold(imgRead_1, THETA, 255, cv2.THRESH_BINARY)
 
 ROI = cv2.bitwise_and(imgRead_1, imgRead_1, mask=img1Binary)
 
 histImg1_2 = histImg_1 = cv2.calcHist([imgRead_1],[0],img1Binary,[256],[0,256])
 
-edges = cv2.Canny(imgRead_1,100,200)
+kernel = np.ones((5,5), np.uint8) #matriz 5x5 cheia de 1s
 
-plt.subplot(2,2,1), plt.imshow(imgRead_1, 'gray')
-plt.subplot(2,2,2), plt.imshow(ROI, 'gray')
-plt.subplot(2,2,3), plt.plot(histImg1_2)
-plt.subplot(2,2,4), plt.imshow(edges, 'gray')
+erosion = cv2.erode(ROI, kernel, iterations=1)
+dilate = cv2.dilate(ROI, kernel, iterations=1)
+
+opening = cv2.morphologyEx(ROI, cv2.MORPH_OPEN, kernel) #erosão seguida de dilatação
+closing = cv2.morphologyEx(ROI, cv2.MORPH_CLOSE, kernel) #dilatação seguida de erosão
+
+plt.subplot(231), plt.imshow(imgRead_1, 'gray'), plt.title("Original"), plt.tight_layout(pad=1.0)
+plt.subplot(232), plt.imshow(ROI, 'gray'), plt.title("Binarizada"), plt.tight_layout(pad=1.0)
+plt.subplot(233), plt.imshow(erosion, 'gray'), plt.title("Erosao"), plt.tight_layout(pad=1.0)
+plt.subplot(234), plt.imshow(dilate, 'gray'), plt.title("Dilatacao"), plt.tight_layout(pad=1.0)
+plt.subplot(235), plt.imshow(opening, 'gray'), plt.title("Opening"), plt.tight_layout(pad=1.0)
+plt.subplot(236), plt.imshow(closing, 'gray'), plt.title("Closing"), plt.tight_layout(pad=1.0)
+
+
+plt.show()
+
+
+# show_image(img1Binary)
 
 
 
@@ -125,7 +136,9 @@ plt.subplot(326), plt.plot(afterhistImg2Clahe), plt.tight_layout(pad=1.0)#, plt.
 
 plt.show()
 
-show_image(histImg2Clahe)
+cv2.imwrite('img2_hist.png', histImg2Clahe)
+
+# show_image(histImg2Clahe)
 
 
 #%%
@@ -146,7 +159,7 @@ plt.subplot(234), plt.imshow(opening, 'gray'), plt.title("Opening"), plt.tight_l
 plt.subplot(235), plt.imshow(closing, 'gray'), plt.title("Closing"), plt.tight_layout(pad=1.0)
 
 
-plt.show
+plt.show()
 
 
 # %%
